@@ -1,0 +1,32 @@
+Core data Layer
+
+
+History
+---------
+Change the structure of the PList
+MOVED TravelAppPlistData TO THE SUPPORTING FILES!
+Added @synthesize dataModelQueryManager=__dataModelQueryManager as a property to into the AppDelegate
+
+The following php files are on the travel.asemota.ch app server:
+    --> getJSONAirport.php (select * from Airports)
+    --> getJSONCountry.php (select * from country)
+    --> getJSONCountryAttributes.php (...)
+    --> getJSONCountryMapCurrency.php(...)
+    --> getJSONFavorites.php(...)
+    --> getJSONUpdateHistory.php(...)
+    --> getJSONWeather.php(...)
+
+Added a folder RemoteMysqlBC which contains all the business logic related to remote updatine of the database
+The plist list has being created.
+Added header and Impl files for the plst
+The test method testCoreData prints out the content from the table favourites.
+Added a DataModelQueryManager.h file: this class servers as query handler / manager. If any select query should be executed anywhere in the application, the following should be down:
+    - import the header file:
+    - call up the particular query method with the NSManagedObjectContext instance. The later instance can be retrieved from the AppDelegate class.
+    
+Createion of Entities and relations.
+Testing of the favoirtes entity table.
+Add the 3x @property definitions to the app delegate header (.h) 
+Add the 2x method definitions to the app delegate header (.h)
+Added a statement block to the file in the file TravelApp-Prefix.pch
+added coredata framework

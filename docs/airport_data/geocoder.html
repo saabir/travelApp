@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TravelApp: GEOCODER</title>
+	
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA_8-igwVQQGi--R3byYlxFww1HmEilFyw&sensor=false"></script>
+	
+	<script type="text/javascript">
+	
+		var countries = new Array();
+		var iso_codes = new Array();
+		var latitudes = new Array();
+		var longitudes = new Array();
+		
+		var geocoder; 
+		var output = "";
+		var index = 1;
+		
+		$(document).ready(function(){
+			
+			$("#start").on("click", startProcessing);
+			
+		});
+	
+		function startProcessing(){
+			
+			// parse the csv country data
+			parseCSV();
+			
+			// initialize the geocoder api
+			geocoder = new google.maps.Geocoder();
+			
+			// geocode the country locations
+			geocodeCountries();
+			
+		}
+		
+		function parseCSV(){
+			
+			// get the csv data
+			var data = $('#csv').val();
+			
+			// split data into rows
+			var rows = data.split("\n");
+			
+			console.log(rows.length);
+			
+			// initialize columns
+			var cols;
+			
+			// now split each row in columns and extract the country name
+			// and country iso-code
+			for(var j = 0; j < rows.length; j++){
+
+				// split row into columns
+				cols = rows[j].split(";");
+				
+				// iterate through columns
+				for(var i = 0; i < cols.length; i++){
+					
+					switch(i){
+						case 0:
+							iso_codes.push(cols[i].replace(";", ""));
+							break;
+							
+						case 1:
+							countries.push(cols[i].replace(";", ""));
+							latitudes.push("");
+							longitudes.push("");
+							break;
+					}
+				}
+			}
+			
+		}
+		
+		function geocodeCountries(){
+			
+			var address = countries[index];
+			
+			console.log(address);
+			
+			console.log(index);
+			
+			if(index < 300){
+				geocoder.geocode( { 'address': address}, function(results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						try
+						{
+							console.log(results[0].address_components.long_name);
+							console.log("lat: " + results[0].geometry.location.lat());
+							console.log("long: " + results[0].geometry.location.lng());
+							console.log("");
+						
+							output += "\n" + index + ";" + iso_codes[index] + ";" + results[0].geometry.location.lat() + ";"
+ + results[0].geometry.location.lng();
+							
+							// update output
+							$("#results").val(output);
+
+						} catch(ex){
+							console.log("no result");
+							console.log();
+						}
+
+						index = index + 1;
+						
+						if (index < countries.length){
+							
+							geocodeCountries();
+						}
+
+					} 
+					else {
+				    console.log("Geocode was not successful for the following reason: " + status);
+				  	 console.log("");
+					}
+				});
+			}
+			else{
+				alert("attention there is something wrong");
+			}
+				
+		}
+		
+	</script>
+	
+</head>
+<body>
+
+<textarea id="csv" style="width:200px; height:600px">"iso_code";"name";"continent";"capital"
+"AD";"Andorra";"EU";"unknown"
+"AE";"United Arab Emirates";"AS";"unknown"
+"AF";"Afghanistan";"AS";"unknown"
+"AG";"Antigua and Barbuda";"NA";"unknown"
+"AI";"Anguilla";"NA";"unknown"
+"AL";"Albania";"EU";"unknown"
+"AM";"Armenia";"AS";"unknown"
+"AN";"Netherlands Antilles";"NA";"unknown"
+"AO";"Angola";"AF";"unknown"
+"AQ";"Antarctica";"AN";"unknown"
+"AR";"Argentina";"SA";"unknown"
+"AS";"American Samoa";"OC";"unknown"
+"AT";"Austria";"EU";"unknown"
+"AU";"Australia";"OC";"unknown"
+"AW";"Aruba";"NA";"unknown"
+"AZ";"Azerbaijan";"AS";"unknown"
+"BA";"Bosnia and Herzegovina";"EU";"unknown"
+"BB";"Barbados";"NA";"unknown"
+"BD";"Bangladesh";"AS";"unknown"
+"BE";"Belgium";"EU";"unknown"
+"BF";"Burkina Faso";"AF";"unknown"
+"BG";"Bulgaria";"EU";"unknown"
+"BH";"Bahrain";"AS";"unknown"
+"BI";"Burundi";"AF";"unknown"
+"BJ";"Benin";"AF";"unknown"
+"BL";"Saint Barthélemy";"NA";"unknown"
+"BM";"Bermuda";"NA";"unknown"
+"BN";"Brunei";"AS";"unknown"
+"BO";"Bolivia";"SA";"unknown"
+"BR";"Brazil";"SA";"unknown"
+"BS";"Bahamas";"NA";"unknown"
+"BT";"Bhutan";"AS";"unknown"
+"BW";"Botswana";"AF";"unknown"
+"BY";"Belarus";"EU";"unknown"
+"BZ";"Belize";"NA";"unknown"
+"CA";"Canada";"NA";"unknown"
+"CC";"Cocos (Keeling) Islands";"AS";"unknown"
+"CD";"Congo (Kinshasa)";"AF";"unknown"
+"CF";"Central African Republic";"AF";"unknown"
+"CG";"Congo (Brazzaville)";"AF";"unknown"
+"CH";"Switzerland";"EU";"unknown"
+"CI";"Côte d'Ivoire";"AF";"unknown"
+"CK";"Cook Islands";"OC";"unknown"
+"CL";"Chile";"SA";"unknown"
+"CM";"Cameroon";"AF";"unknown"
+"CN";"China";"AS";"unknown"
+"CO";"Colombia";"SA";"unknown"
+"CR";"Costa Rica";"NA";"unknown"
+"CU";"Cuba";"NA";"unknown"
+"CV";"Cape Verde";"AF";"unknown"
+"CX";"Christmas Island";"AS";"unknown"
+"CY";"Cyprus";"AS";"unknown"
+"CZ";"Czech Republic";"EU";"unknown"
+"DE";"Germany";"EU";"unknown"
+"DJ";"Djibouti";"AF";"unknown"
+"DK";"Denmark";"EU";"unknown"
+"DM";"Dominica";"NA";"unknown"
+"DO";"Dominican Republic";"NA";"unknown"
+"DZ";"Algeria";"AF";"unknown"
+"EC";"Ecuador";"SA";"unknown"
+"EE";"Estonia";"EU";"unknown"
+"EG";"Egypt";"AF";"unknown"
+"EH";"Western Sahara";"AF";"unknown"
+"ER";"Eritrea";"AF";"unknown"
+"ES";"Spain";"EU";"unknown"
+"ET";"Ethiopia";"AF";"unknown"
+"FI";"Finland";"EU";"unknown"
+"FJ";"Fiji";"OC";"unknown"
+"FK";"Falkland Islands";"SA";"unknown"
+"FM";"Micronesia";"OC";"unknown"
+"FO";"Faroe Islands";"EU";"unknown"
+"FR";"France";"EU";"unknown"
+"GA";"Gabon";"AF";"unknown"
+"GB";"United Kingdom";"EU";"unknown"
+"GD";"Grenada";"NA";"unknown"
+"GE";"Georgia";"AS";"unknown"
+"GF";"French Guiana";"SA";"unknown"
+"GG";"Guernsey";"EU";"unknown"
+"GH";"Ghana";"AF";"unknown"
+"GI";"Gibraltar";"EU";"unknown"
+"GL";"Greenland";"NA";"unknown"
+"GM";"Gambia";"AF";"unknown"
+"GN";"Guinea";"AF";"unknown"
+"GP";"Guadeloupe";"NA";"unknown"
+"GQ";"Equatorial Guinea";"AF";"unknown"
+"GR";"Greece";"EU";"unknown"
+"GS";"South Georgia and the South Sandwich Islands";"AN";"unknown"
+"GT";"Guatemala";"NA";"unknown"
+"GU";"Guam";"OC";"unknown"
+"GW";"Guinea-Bissau";"AF";"unknown"
+"GY";"Guyana";"SA";"unknown"
+"HK";"Hong Kong";"AS";"unknown"
+"HN";"Honduras";"NA";"unknown"
+"HR";"Croatia";"EU";"unknown"
+"HT";"Haiti";"NA";"unknown"
+"HU";"Hungary";"EU";"unknown"
+"ID";"Indonesia";"AS";"unknown"
+"IE";"Ireland";"EU";"unknown"
+"IL";"Israel";"AS";"unknown"
+"IM";"Isle of Man";"EU";"unknown"
+"IN";"India";"AS";"unknown"
+"IO";"British Indian Ocean Territory";"AS";"unknown"
+"IQ";"Iraq";"AS";"unknown"
+"IR";"Iran";"AS";"unknown"
+"IS";"Iceland";"EU";"unknown"
+"IT";"Italy";"EU";"unknown"
+"JE";"Jersey";"EU";"unknown"
+"JM";"Jamaica";"NA";"unknown"
+"JO";"Jordan";"AS";"unknown"
+"JP";"Japan";"AS";"unknown"
+"KE";"Kenya";"AF";"unknown"
+"KG";"Kyrgyzstan";"AS";"unknown"
+"KH";"Cambodia";"AS";"unknown"
+"KI";"Kiribati";"OC";"unknown"
+"KM";"Comoros";"AF";"unknown"
+"KN";"Saint Kitts and Nevis";"NA";"unknown"
+"KP";"North Korea";"AS";"unknown"
+"KR";"South Korea";"AS";"unknown"
+"KS";"Kosovo";"EU";"unknown"
+"KW";"Kuwait";"AS";"unknown"
+"KY";"Cayman Islands";"NA";"unknown"
+"KZ";"Kazakhstan";"AS";"unknown"
+"LA";"Laos";"AS";"unknown"
+"LB";"Lebanon";"AS";"unknown"
+"LC";"Saint Lucia";"NA";"unknown"
+"LI";"Liechtenstein";"EU";"unknown"
+"LK";"Sri Lanka";"AS";"unknown"
+"LR";"Liberia";"AF";"unknown"
+"LS";"Lesotho";"AF";"unknown"
+"LT";"Lithuania";"EU";"unknown"
+"LU";"Luxembourg";"EU";"unknown"
+"LV";"Latvia";"EU";"unknown"
+"LY";"Libya";"AF";"unknown"
+"MA";"Morocco";"AF";"unknown"
+"MC";"Monaco";"EU";"unknown"
+"MD";"Moldova";"EU";"unknown"
+"ME";"Montenegro";"EU";"unknown"
+"MF";"Saint Martin";"NA";"unknown"
+"MG";"Madagascar";"AF";"unknown"
+"MH";"Marshall Islands";"OC";"unknown"
+"MK";"Macedonia";"EU";"unknown"
+"ML";"Mali";"AF";"unknown"
+"MM";"Burma";"AS";"unknown"
+"MN";"Mongolia";"AS";"unknown"
+"MO";"Macau";"AS";"unknown"
+"MP";"Northern Mariana Islands";"OC";"unknown"
+"MQ";"Martinique";"NA";"unknown"
+"MR";"Mauritania";"AF";"unknown"
+"MS";"Montserrat";"NA";"unknown"
+"MT";"Malta";"EU";"unknown"
+"MU";"Mauritius";"AF";"unknown"
+"MV";"Maldives";"AS";"unknown"
+"MW";"Malawi";"AF";"unknown"
+"MX";"Mexico";"NA";"unknown"
+"MY";"Malaysia";"AS";"unknown"
+"MZ";"Mozambique";"AF";"unknown"
+"NA";"Namibia";"AF";"unknown"
+"NC";"New Caledonia";"OC";"unknown"
+"NE";"Niger";"AF";"unknown"
+"NF";"Norfolk Island";"OC";"unknown"
+"NG";"Nigeria";"AF";"unknown"
+"NI";"Nicaragua";"NA";"unknown"
+"NL";"Netherlands";"EU";"unknown"
+"NO";"Norway";"EU";"unknown"
+"NP";"Nepal";"AS";"unknown"
+"NR";"Nauru";"OC";"unknown"
+"NU";"Niue";"OC";"unknown"
+"NZ";"New Zealand";"OC";"unknown"
+"OM";"Oman";"AS";"unknown"
+"PA";"Panama";"NA";"unknown"
+"PE";"Perú";"SA";"unknown"
+"PF";"French Polynesia";"OC";"unknown"
+"PG";"Papua New Guinea";"OC";"unknown"
+"PH";"Philippines";"AS";"unknown"
+"PK";"Pakistan";"AS";"unknown"
+"PL";"Poland";"EU";"unknown"
+"PM";"Saint Pierre and Miquelon";"NA";"unknown"
+"PN";"Pitcairn";"OC";"unknown"
+"PR";"Puerto Rico";"NA";"unknown"
+"PS";"Palestinian Territory";"AS";"unknown"
+"PT";"Portugal";"EU";"unknown"
+"PW";"Palau";"OC";"unknown"
+"PY";"Paraguay";"SA";"unknown"
+"QA";"Qatar";"AS";"unknown"
+"RE";"Réunion";"AF";"unknown"
+"RO";"Romania";"EU";"unknown"
+"RS";"Serbia";"EU";"unknown"
+"RU";"Russia";"EU";"unknown"
+"RW";"Rwanda";"AF";"unknown"
+"SA";"Saudi Arabia";"AS";"unknown"
+"SB";"Solomon Islands";"OC";"unknown"
+"SC";"Seychelles";"AF";"unknown"
+"SD";"Sudan";"AF";"unknown"
+"SE";"Sweden";"EU";"unknown"
+"SG";"Singapore";"AS";"unknown"
+"SH";"Saint Helena";"AF";"unknown"
+"SI";"Slovenia";"EU";"unknown"
+"SK";"Slovakia";"EU";"unknown"
+"SL";"Sierra Leone";"AF";"unknown"
+"SM";"San Marino";"EU";"unknown"
+"SN";"Senegal";"AF";"unknown"
+"SO";"Somalia";"AF";"unknown"
+"SR";"Suriname";"SA";"unknown"
+"SS";"South Sudan";"AF";"unknown"
+"ST";"São Tomé and Principe";"AF";"unknown"
+"SV";"El Salvador";"NA";"unknown"
+"SY";"Syria";"AS";"unknown"
+"SZ";"Swaziland";"AF";"unknown"
+"TC";"Turks and Caicos Islands";"NA";"unknown"
+"TD";"Chad";"AF";"unknown"
+"TF";"French Southern Territories";"AN";"unknown"
+"TG";"Togo";"AF";"unknown"
+"TH";"Thailand";"AS";"unknown"
+"TJ";"Tajikistan";"AS";"unknown"
+"TK";"Tokelau";"OC";"unknown"
+"TL";"Timor-Leste";"AS";"unknown"
+"TM";"Turkmenistan";"AS";"unknown"
+"TN";"Tunisia";"AF";"unknown"
+"TO";"Tonga";"OC";"unknown"
+"TR";"Turkey";"AS";"unknown"
+"TT";"Trinidad and Tobago";"NA";"unknown"
+"TV";"Tuvalu";"OC";"unknown"
+"TW";"Taiwan";"AS";"unknown"
+"TZ";"Tanzania";"AF";"unknown"
+"UA";"Ukraine";"EU";"unknown"
+"UG";"Uganda";"AF";"unknown"
+"UM";"United States Minor Outlying Islands";"OC";"unknown"
+"US";"United States";"NA";"unknown"
+"UY";"Uruguay";"SA";"unknown"
+"UZ";"Uzbekistan";"AS";"unknown"
+"VA";"Vatican City";"EU";"unknown"
+"VC";"Saint Vincent and the Grenadines";"NA";"unknown"
+"VE";"Venezuela";"SA";"unknown"
+"VG";"British Virgin Islands";"NA";"unknown"
+"VI";"U.S. Virgin Islands";"NA";"unknown"
+"VN";"Vietnam";"AS";"unknown"
+"VU";"Vanuatu";"OC";"unknown"
+"WF";"Wallis and Futuna";"OC";"unknown"
+"WS";"Samoa";"OC";"unknown"
+"YE";"Yemen";"AS";"unknown"
+"YT";"Mayotte";"AF";"unknown"
+"ZA";"South Africa";"AF";"unknown"
+"ZM";"Zambia";"AF";"unknown"
+"ZW";"Zimbabwe";"AF";"unknown"
+"ZZ";"Unknown or unassigned country";"AF";"unknown"</textarea>
+
+<textarea id="results" style="width:200px; height:600px"></textarea>
+
+<input type="button" id="start" value="START GEOCODING"></input>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+MySQL Datenbank:
+
+host: nereid.kreativmedia.ch
+db: travelapp
+user: travelapp_admin
+passwort: bfh.2012

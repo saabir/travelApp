@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Airport" representedClassName="Airport" syncable="YES">
+        <attribute name="airport_name" optional="YES" attributeType="String" maxValueString="250" syncable="YES"/>
+        <attribute name="city_name" optional="YES" attributeType="String" maxValueString="250" syncable="YES"/>
+        <attribute name="country_iso_code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="country_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="iata_code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="icao_code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="String" maxValueString="200" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="String" maxValueString="200" syncable="YES"/>
+        <attribute name="mysqlId" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="timezone" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" maxValueString="250" syncable="YES"/>
+        <relationship name="fkCountry" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="fkAirports" inverseEntity="Country" syncable="YES"/>
+        <relationship name="fkRoutes" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Routes" inverseName="fkAirports" inverseEntity="Routes" syncable="YES"/>
+    </entity>
+    <entity name="Country" representedClassName="Country" syncable="YES">
+        <attribute name="capital" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="continent" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="iso_code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="fkAirports" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Airport" inverseName="fkCountry" inverseEntity="Airport" syncable="YES"/>
+        <relationship name="fkCountryAttributes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Country_attributes" inverseName="fkCountry" inverseEntity="Country_attributes" syncable="YES"/>
+        <relationship name="fkCurrency" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Currency" inverseName="fkCountry" inverseEntity="Currency" syncable="YES"/>
+        <relationship name="fkWeather" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Weather" inverseName="fkCountry" inverseEntity="Weather" syncable="YES"/>
+        <fetchedProperty name="fetchedProperty" optional="YES" syncable="YES">
+            <fetchRequest name="fetchedPropertyFetchRequest" entity="Country"/>
+        </fetchedProperty>
+    </entity>
+    <entity name="Country_attributes" representedClassName="Country_attributes" syncable="YES">
+        <attribute name="sorting" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" maxValueString="255" syncable="YES"/>
+        <attribute name="value" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="fkCountry" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="Country" inverseName="fkCountryAttributes" inverseEntity="Country" syncable="YES"/>
+    </entity>
+    <entity name="Currency" representedClassName="Currency" syncable="YES">
+        <attribute name="conversion_factor" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" maxValueString="200" syncable="YES"/>
+        <attribute name="short_code" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="fkCountry" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Country" inverseName="fkCurrency" inverseEntity="Country" syncable="YES"/>
+    </entity>
+    <entity name="Favorites" syncable="YES">
+        <attribute name="type" optional="YES" attributeType="String" maxValueString="200" syncable="YES"/>
+        <attribute name="value" optional="YES" attributeType="String" maxValueString="250" syncable="YES"/>
+    </entity>
+    <entity name="Routes" representedClassName="Routes" syncable="YES">
+        <attribute name="distance" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="from_airport" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="to_airport" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="fkAirports" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Airport" inverseName="fkRoutes" inverseEntity="Airport" syncable="YES"/>
+    </entity>
+    <entity name="Update_history" syncable="YES">
+        <attribute name="data_set" optional="YES" attributeType="String" maxValueString="200" syncable="YES"/>
+        <attribute name="last_update" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="version" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Weather" representedClassName="Weather" syncable="YES">
+        <attribute name="average" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="average_high" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="average_low" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="month" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="precipitation" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="fkCountry" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="fkWeather" inverseEntity="Country" syncable="YES"/>
+    </entity>
+    <fetchRequest name="FReqAllCountriesFromContinent" entity="Country" predicateString="continent == &quot;NAME_OF_CONTINENT&quot;"/>
+    <fetchRequest name="FReqAttributeByName" entity="Country_attributes" predicateString="type CONTAINS &quot;ATTRIBUTE_TYPE_NAME&quot;"/>
+    <fetchRequest name="FReqCountryIsoCode" entity="Country" predicateString="iso_code CONTAINS &quot;COUNTRY_ISOCODE&quot;"/>
+    <elements>
+        <element name="Airport" positionX="439" positionY="153" width="128" height="225"/>
+        <element name="Country" positionX="108" positionY="207" width="128" height="224"/>
+        <element name="Country_attributes" positionX="-101" positionY="441" width="128" height="105"/>
+        <element name="Currency" positionX="396" positionY="417" width="128" height="105"/>
+        <element name="Favorites" positionX="585" positionY="540" width="128" height="75"/>
+        <element name="Routes" positionX="628" positionY="378" width="128" height="120"/>
+        <element name="Update_history" positionX="628" positionY="252" width="128" height="90"/>
+        <element name="Weather" positionX="322" positionY="549" width="128" height="135"/>
+    </elements>
+</model>
